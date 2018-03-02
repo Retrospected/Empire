@@ -548,8 +548,8 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
         $OutputFormat = 'John',
 
         [ValidateRange(0,10000)]
-	    [Int]
-	    $Sleep = 0,
+        [Int]
+        $Sleep = 0,
 
         [Management.Automation.PSCredential]
         [Management.Automation.CredentialAttribute()]
@@ -1100,9 +1100,9 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
         [Switch]
         $Tombstone,
 
-	    [ValidateRange(0,10000)]
-	    [Int]
-	    $Sleep = 0,
+        [ValidateRange(0,10000)]
+        [Int]
+        $Sleep = 0,
 
         [ValidateSet('John', 'Hashcat')]
         [Alias('Format')]
