@@ -1039,7 +1039,7 @@ Defaults to 'John'.
 A [Management.Automation.PSCredential] object of alternate credentials
 for connection to the target domain.
 .PARAMETER Sleep
-Specifies the sleep in seconds between ticket requests
+Specifies the sleep in seconds between ticket requests.
 .EXAMPLE
 Invoke-Kerberoast | fl
 Kerberoasts all found SPNs for the current domain.
