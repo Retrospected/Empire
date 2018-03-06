@@ -487,9 +487,13 @@ Defaults to 'John'.
 A [Management.Automation.PSCredential] object of alternate credentials
 for connection to the remote domain using Invoke-UserImpersonation.
 
-.PARAMETER Sleep
+.PARAMETER Delay
 
-Specifies the sleep in seconds between ticket requests.
+Specifies the delay in seconds between ticket requests.
+
+.PARAMETER Jitter
+
+Specifies the jitter (0-1.0) to apply to any specified -Delay, defaults to +/- 0.3
 
 .EXAMPLE
 
@@ -549,7 +553,11 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
 
         [ValidateRange(0,10000)]
         [Int]
-        $Sleep = 0,
+        $Delay = 0,
+
+        [ValidateRange(0.0, 1.0)]
+        [Double]
+        $Jitter = .3,
 
         [Management.Automation.PSCredential]
         [Management.Automation.CredentialAttribute()]
@@ -573,7 +581,10 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
         }
 
         ForEach ($Object in $TargetObject) {
-            Start-Sleep($Sleep)
+
+            # sleep for our semi-randomized interval
+            Start-Sleep -Seconds $RandNo.Next((1-$Jitter)*$Delay, (1+$Jitter)*$Delay)
+
             if ($PSBoundParameters['User']) {
                 $UserSPN = $Object.ServicePrincipalName
                 $SamAccountName = $Object.SamAccountName
@@ -1038,8 +1049,10 @@ Defaults to 'John'.
 .PARAMETER Credential
 A [Management.Automation.PSCredential] object of alternate credentials
 for connection to the target domain.
-.PARAMETER Sleep
-Specifies the sleep in seconds between ticket requests.
+.PARAMETER Delay
+Specifies the delay in seconds between ticket requests.
+.PARAMETER Jitter
+Specifies the jitter (0-1.0) to apply to any specified -Delay, defaults to +/- 0.3
 .EXAMPLE
 Invoke-Kerberoast | fl
 Kerberoasts all found SPNs for the current domain.
@@ -1102,7 +1115,11 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
 
         [ValidateRange(0,10000)]
         [Int]
-        $Sleep = 0,
+        $Delay = 0,
+
+        [ValidateRange(0.0, 1.0)]
+        [Double]
+        $Jitter = .3,
 
         [ValidateSet('John', 'Hashcat')]
         [Alias('Format')]
@@ -1136,7 +1153,7 @@ Outputs a custom object containing the SamAccountName, ServicePrincipalName, and
 
     PROCESS {
         if ($PSBoundParameters['Identity']) { $UserSearcherArguments['Identity'] = $Identity }
-        Get-DomainUser @UserSearcherArguments | Where-Object {$_.samaccountname -ne 'krbtgt'} | Get-DomainSPNTicket -Sleep $Sleep -OutputFormat $OutputFormat
+        Get-DomainUser @UserSearcherArguments | Where-Object {$_.samaccountname -ne 'krbtgt'} | Get-DomainSPNTicket -Delay $Delay -OutputFormat $OutputFormat -Jitter $Jitter
     }
 
     END {
